@@ -1,0 +1,18 @@
+[Unit]
+Description=AgentNews API
+After=network.target
+
+[Service]
+Type=simple
+User=agentnews
+WorkingDirectory=/opt/agentnews
+EnvironmentFile=/opt/agentnews/.env
+ExecStart=/opt/agentnews/.venv/bin/uvicorn agentnews.api:app --host 127.0.0.1 --port 8000 --workers 1 --timeout-keep-alive 30 --timeout-graceful-shutdown 10
+ExecStartPost=/usr/bin/curl -sf http://127.0.0.1:8000/healthz
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGTERM
+TimeoutStopSec=12
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+{
+  "score": 78.5,
+  "overall_confidence": 0.785,
+  "axis_scores": {"breadth": 0.82, "depth": 0.75, "novelty": 0.79},
+  "rubric": {"coverage": 80, "rigor": 77}
+}

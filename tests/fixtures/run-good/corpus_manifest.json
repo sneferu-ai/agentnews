@@ -1,0 +1,22 @@
+{
+  "citations": [
+    {
+      "ordinal": 1,
+      "title": "Parallel multi-agent evidence gathering",
+      "url": "https://example.com/paper-1",
+      "authors": "Smith, Lee",
+      "year": "2024",
+      "source_type": "web",
+      "excerpt": "Teams of parallel agents outperform single agents on broad evidence gathering tasks when sources are partitioned to minimize overlap."
+    },
+    {
+      "ordinal": 5,
+      "title": "Synthesis model attention budgets",
+      "url": "https://example.com/paper-5",
+      "authors": "Nguyen",
+      "year": "2025",
+      "source_type": "web",
+      "excerpt": "Synthesis models drop low-salience contributions beyond a context budget of roughly seven sub-agent reports."
+    }
+  ]
+}

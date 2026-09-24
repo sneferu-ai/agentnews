@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+
+{% block title %}Page not found — AgentNews{% endblock %}
+{% block description %}The requested bundle or page was not found.{% endblock %}
+
+{% block content %}
+<section class="error-page" aria-labelledby="err-heading">
+  <p class="error-page__code">404 · not_found</p>
+  <h1 id="err-heading" class="error-page__heading">Page not found</h1>
+  <p class="error-page__body">This bundle may be unpublished, or the URL may be incorrect. Published bundles appear on the newsroom index; the catalog endpoint lists every bundle available to subscribers.</p>
+  <p class="error-page__actions">
+    <a href="{{ url_prefix }}/">Return to the newsroom →</a>
+    <a href="{{ url_prefix }}/v1/catalog">Browse the public catalog →</a>
+  </p>
+</section>
+{% endblock %}

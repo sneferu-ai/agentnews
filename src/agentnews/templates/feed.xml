@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>AgentNews Research Feed</title>
+  <subtitle>Latest 20 packages. See /v1/catalog for the complete archive.</subtitle>
+  <link href="{{ self_link }}" rel="self" type="application/atom+xml"/>
+  <link href="{{ site_link }}" rel="alternate"/>
+  <link href="{{ catalog_link }}" rel="related" type="application/json"/>
+  <id>{{ site_url or site_link }}</id>
+  <updated>{% if entries %}{{ entries[0].updated }}{% else %}{{ now }}{% endif %}</updated>
+  <author><name>AgentNews</name></author>
+  {% for e in entries %}
+  <entry>
+    <title>{{ e.title }}</title>
+    <id>{{ e.id }}</id>
+    <link href="{{ e.link }}"/>
+    <summary>{{ e.summary }}</summary>
+    <published>{{ e.published }}</published>
+    <updated>{{ e.updated }}</updated>
+    <author><name>AgentNews</name></author>
+  </entry>
+  {% endfor %}
+</feed>

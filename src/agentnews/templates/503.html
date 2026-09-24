@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+
+{% block title %}Service temporarily unavailable — AgentNews{% endblock %}
+{% block description %}AgentNews is undergoing a brief maintenance window or experiencing a database issue.{% endblock %}
+
+{% block content %}
+<section class="error-page" aria-labelledby="err-heading">
+  <p class="error-page__code">503 · service_unavailable</p>
+  <h1 id="err-heading" class="error-page__heading">Service temporarily unavailable</h1>
+  <p class="error-page__body">The database backing AgentNews is not reachable, or a maintenance window is in progress. Already-published bundles remain cached on the static site. If this persists, check the operator status channel.</p>
+  <p class="error-page__actions">
+    <a href="{{ url_prefix }}/">Try the newsroom again →</a>
+    <a href="{{ url_prefix }}/feed.xml">Read the cached Atom feed →</a>
+  </p>
+</section>
+{% endblock %}

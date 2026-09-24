@@ -1,0 +1,71 @@
+upstream agentnews_api {
+    server 127.0.0.1:8000;
+    keepalive 32;
+}
+
+server {
+    listen 80;
+    server_name _;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name _;
+
+    ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+
+    root /opt/agentnews/static_build;
+    index index.html;
+
+    error_page 404 /404.html;
+    error_page 502 503 /503.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location = /access {
+        try_files /access.html =404;
+    }
+
+    location /static/ {
+        expires 1h;
+    }
+
+    # Extensionless article URLs: /articles/{slug} → /articles/{slug}.html
+    # try_files appends .html to the full URI ($uri = /articles/slug).
+    location /articles/ {
+        try_files $uri.html =404;
+    }
+
+    # /feed.xml is generated dynamically from SQLite by the FastAPI
+    # process (FR-028 output layout excludes feed.xml; §8 step 3 proxies
+    # /v1/*, /healthz, and /feed.xml). deploy-static must NOT serve it.
+    location /feed.xml {
+        proxy_pass http://agentnews_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 30s;
+    }
+
+    location /v1/ {
+        proxy_pass http://agentnews_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_read_timeout 30s;
+    }
+
+    location /healthz {
+        proxy_pass http://agentnews_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_read_timeout 30s;
+    }
+}

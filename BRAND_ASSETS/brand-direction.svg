@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="AgentNews — Build-Ready Product Contract (B13) fallback brand direction">
+  <rect width="1024" height="1024" fill="#0D1418"/>
+  <path fill="#162329" d="M0 650L1024 390V1024H0Z"/>
+  <circle cx="280" cy="310" r="152" fill="#F2A65A"/>
+  <path fill="#55C1A7" d="M520 160H900L720 520H440Z"/>
+  <path fill="#F4F0E6" opacity=".9" d="M110 790H820V832H110ZM110 865H620V889H110Z"/>
+  <g fill="none" stroke="#F4F0E6" stroke-width="12" opacity=".42">
+    <path d="M80 100H944V944H80Z"/>
+    <path d="M80 570H944"/>
+  </g>
+</svg>

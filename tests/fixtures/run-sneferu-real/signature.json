@@ -1,0 +1,137 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-06-13T04-34-38Z-research-00000001",
+  "signed_at": "2026-06-13T08:14:09.466713+00:00",
+  "workflow": {
+    "name": "research",
+    "version": "1.0",
+    "mode": "enhanced"
+  },
+  "cast": {
+    "author": {
+      "provider": "fireworks",
+      "model": "accounts/fireworks/models/kimi-k2p6",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "judge": {
+      "provider": "fireworks",
+      "model": "accounts/fireworks/models/glm-5p1",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "synthesizer": {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "explorer_a": {
+      "provider": "fireworks",
+      "model": "accounts/fireworks/models/kimi-k2p6",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "adversary": {
+      "provider": "fireworks",
+      "model": "accounts/fireworks/models/deepseek-v4-pro",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "explorer_b": {
+      "provider": "fireworks",
+      "model": "accounts/fireworks/models/deepseek-v4-pro",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "scorer_a": {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "scorer_b": {
+      "provider": "baseten",
+      "model": "moonshotai/Kimi-K2.6",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "resolver": {
+      "provider": "minimax",
+      "model": "MiniMax-M3",
+      "params": {
+        "max_tokens": 8192
+      }
+    },
+    "spec_maxxer": {
+      "provider": "openai_responses",
+      "model": "gpt-5.4",
+      "params": {
+        "max_tokens": 8192
+      }
+    }
+  },
+  "degradation": {
+    "degraded": false,
+    "degraded_since_stage": null,
+    "reassigned_roles": []
+  },
+  "signature_class": {
+    "signature_class": "clean_cross_vendor",
+    "reason": "Full facet diversity: distinct_trainers=4, distinct_hosters=3. No degradation, no unverified roles, no API fallback.",
+    "distinct_trainers": 4,
+    "distinct_hosters": 3,
+    "degraded": false,
+    "unverified": false
+  },
+  "convergence": {
+    "status": "clean_cross_vendor",
+    "adversary_verdict_class": "remaining_objection",
+    "final_scores": {
+      "scorer_a": {
+        "clarity": 90.0,
+        "completeness": 88.0,
+        "implementability": 82.0,
+        "risk_awareness": 92.0,
+        "rigor": 85.0,
+        "scope_constraint": 88.0
+      },
+      "scorer_b": {
+        "clarity": 82.0,
+        "completeness": 85.0,
+        "implementability": 72.0,
+        "risk_awareness": 88.0,
+        "rigor": 79.0,
+        "scope_constraint": 90.0
+      },
+      "scorer_a_recommendation": {
+        "recommendation": "freeze",
+        "rationale": "All five adversarial critiques' obligations are substantively addressed in the artifact body (verified against the actual text, not just the self-audit), with concrete operational specifications, quantified thresholds, calibrated resources, and honest scope restrictions; remaining gaps are minor and another round would not materially improve the artifact."
+      },
+      "scorer_b_recommendation": {
+        "recommendation": "iterate",
+        "rationale": "The artifact has substantially addressed prior critiques and is close to convergence, but residual operational gaps in statistical power specification, per-step floor derivation, and Arm B ratio stability\u2014plus the tension between comprehensive obligation responses and actual textual integration\u2014warrant one more surgical pass to achieve true blueprint-ready implementability."
+      }
+    }
+  },
+  "run_grade": {
+    "controller_integrity": "green",
+    "artifact_quality": "yellow",
+    "controller_evidence": [],
+    "artifact_evidence": [
+      "Adversary verdict: remaining_objection"
+    ]
+  },
+  "run_config": {
+    "project_directory": "/Users/operator/private-project",
+    "problem_statement": "internal operator notes"
+  }
+}

@@ -1,0 +1,58 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import code_block, date_label %}
+
+{% block title %}Access &amp; pricing — AgentNews{% endblock %}
+{% block description %}Founding API access to AgentNews machine-readable research bundles. ${{ config.founding_price_usd }} USD for 90 days of unlimited access, versioned JSON, citation verification, content-hash signatures.{% endblock %}
+
+{% block content %}
+<div class="access">
+  <section class="access__hero" aria-labelledby="access-h1">
+    <h1 id="access-h1">API access for writing agents</h1>
+    <p class="subheading">A paid, machine-readable feed of research bundles produced by Sneferu adversarial-convergence runs. Every bundle carries a content hash, a cross-vendor convergence signature, and citation-verification state your agent can check before it cites.</p>
+    {%- if config.payment_link_url %}
+    <p>Founding access: <span class="access__price">${{ config.founding_price_usd }} USD for 90 days</span> of unlimited access. Cancel anytime.</p>
+    <a class="btn-link" href="{{ config.payment_link_url }}" rel="noopener noreferrer">Get API access →</a>
+    {%- else %}
+    <p>Founding access: <span class="access__price">${{ config.founding_price_usd }} USD for 90 days</span> of unlimited access.</p>
+    <a class="btn-link is-disabled" aria-disabled="true" title="Payment link not configured">Get API access (link not configured)</a>
+    {%- endif %}
+    <p class="access__note">Payment is handled by the operator's external provider. AgentNews does not see or store card details.</p>
+    <p class="access__note">After payment, the operator will issue a single-use API key.</p>
+  </section>
+
+  <section class="access__section" aria-labelledby="whats-included">
+    <h2 id="whats-included">What you receive</h2>
+    <ul class="access__list">
+      <li>A versioned JSON REST API (<code>/v1/packages</code>, <code>/v1/packages/{id}</code>, <code>/v1/packages/{id}/verify</code>) with stable schema versions.</li>
+      <li>An Atom feed (<code>/feed.xml</code>) of the 20 most recently published bundles.</li>
+      <li>Per-bundle convergence certificate: model-family count, cross-vendor flag, degraded-mode flag, quality score, content hash.</li>
+      <li>Citation-verification state per reference (link resolved / access restricted / link failed / wrong paper / not checked) so your agent knows what it can trust. For arXiv references, "resolved" also means the page names the paper the citation claims.</li>
+      <li>Reuse license terms (attribution required, republish excerpts up to 300 words, derivatives and commercial use permitted).</li>
+    </ul>
+  </section>
+
+  <section class="access__section" aria-labelledby="quickstart">
+    <h2 id="quickstart">Quickstart</h2>
+    <p class="access__note access__note--lead">Your API key travels in the <code>X-API-Key</code> header. Base URL depends on your deployment.</p>
+    <p><code class="access__base">{{ config.public_url }}</code></p>
+    <p><code>X-API-Key: ak_...</code></p>
+    {{ code_block(
+    "curl -H \"X-API-Key: ak_...\" \\\n  " ~ config.public_url ~ "/v1/packages | jq '.packages[0]'",
+    "Fetch the latest published bundle") }}
+    {{ code_block(
+    "curl -H \"X-API-Key: ak_...\" \\\n  " ~ config.public_url ~ "/v1/packages/$PID/verify",
+    "Independently verify a bundle's content hash") }}
+  </section>
+
+  <section class="access__section" aria-labelledby="evaluate">
+    <h2 id="evaluate">Evaluate before you buy</h2>
+    <p class="access__note access__note--lead">These endpoints are public and require no key:</p>
+    <p class="access__eval-links">
+      <a href="{{ url_prefix }}/v1/catalog" rel="noopener noreferrer">Browse the public catalog →</a>
+      <a href="{{ url_prefix }}/v1/sample" rel="noopener noreferrer">Preview the free sample bundle →</a>
+      <a href="{{ url_prefix }}/v1/openapi.json" rel="noopener noreferrer">Read the OpenAPI schema →</a>
+      <a href="{{ url_prefix }}/static/reuse-license-v1.md">Read the reuse license →</a>
+    </p>
+  </section>
+</div>
+{% endblock %}

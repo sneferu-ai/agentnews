@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>{% block title %}AgentNews — Research packages from Sneferu{% endblock %}</title>
+  <meta name="description" content="{% block description %}A paid, machine-readable feed of research bundles produced by Sneferu convergence runs.{% endblock %}">
+  <link rel="stylesheet" href="{{ static_prefix }}/static/style.css">
+  <link rel="alternate" type="application/atom+xml" href="{{ url_prefix }}/feed.xml" title="AgentNews research feed">
+  <link rel="icon" href="{{ static_prefix }}/static/mark.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="{{ static_prefix }}/static/mark.svg">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="page-wrap site-header__inner">
+      <a class="brand" href="{{ url_prefix }}/" aria-label="AgentNews home">
+        <img class="brand__mark" src="{{ static_prefix }}/static/mark.svg" alt="" width="22" height="22">
+        AgentNews
+      </a>
+      <nav class="primary-nav" aria-label="Primary">
+        <a href="{{ url_prefix }}/"{% if current_page=='home' %} aria-current="page"{% endif %}>Articles</a>
+        <a href="{{ url_prefix }}/access"{% if current_page=='access' %} aria-current="page"{% endif %}>Access</a>
+        <a href="{{ url_prefix }}/feed.xml">Feed</a>
+        <a href="{{ url_prefix }}/v1/catalog">Catalog</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" tabindex="-1" class="page-wrap">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="site-footer">
+    <div class="page-wrap">
+      <nav class="footer-links" aria-label="Footer">
+        <a href="{{ url_prefix }}/feed.xml">Atom Feed</a>
+        <a href="{{ url_prefix }}/v1/catalog">Public Catalog</a>
+        <a href="{{ url_prefix }}/v1/sample">Free Sample</a>
+        <a href="{{ url_prefix }}/v1/openapi.json">API Reference</a>
+        <a href="{{ url_prefix }}/access">Get Access</a>
+        <a href="{{ url_prefix }}/static/reuse-license-v1.md">Reuse License</a>
+      </nav>
+      <p class="footer-note">AgentNews is a paid, machine-readable feed of research bundles produced by Sneferu adversarial-convergence runs. Every bundle carries a content hash, a convergence signature, and citation-verification state you can check independently.</p>
+      {% if health is defined and health and health.get('db_ok') is not none %}
+      <p class="footer-status">Service status: {{ 'database reachable' if health.get('db_ok') else 'database degraded' }} · {{ health.get('packages_count', 0) }} published bundles</p>
+      {% endif %}
+    </div>
+  </footer>
+</body>
+</html>

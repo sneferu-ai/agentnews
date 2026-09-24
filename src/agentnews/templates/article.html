@@ -1,0 +1,60 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import prose, citation_list, certificate, reuse_summary, score_badge, date_label, package_chips %}
+
+{% block title %}{{ pkg.question }} — AgentNews{% endblock %}
+{% block description %}{{ (pkg.summary or '')[:155] }}{% endblock %}
+
+{% block content %}
+<article aria-labelledby="article-h1">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ url_prefix }}/">Articles</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span>{{ pkg.id }}</span>
+  </nav>
+
+  <header class="article-header">
+    <h1 id="article-h1" class="article-h1">{{ pkg.question }}</h1>
+    <p class="article-meta">
+      {{ score_badge(pkg.get('quality_score')) }}
+      {{ package_chips(pkg) }}
+      {{ date_label(pkg.get('published_at')) }}
+    </p>
+    {%- if pkg.get('summary') %}
+    <p class="article-summary">{{ pkg.summary }}</p>
+    {%- endif %}
+  </header>
+
+  <section class="section measure" aria-labelledby="findings-heading">
+    <h2 id="findings-heading">Findings</h2>
+    {{ prose(findings_html) }}
+  </section>
+
+  {%- if method_html and method_html.strip() %}
+  <section class="section measure" aria-labelledby="method-heading">
+    <h2 id="method-heading">Method notes</h2>
+    {{ prose(method_html) }}
+  </section>
+  {%- endif %}
+
+  <section class="section" aria-labelledby="refs-heading">
+    <h2 id="refs-heading">References</h2>
+    {{ citation_list(citations) }}
+  </section>
+
+  <div class="panels">
+    {{ certificate(pkg, config) }}
+    {{ reuse_summary(pkg, config) }}
+  </div>
+
+  {%- if latency_disclosure %}
+  <p class="latency-note">{{ latency_disclosure }}</p>
+  {%- endif %}
+
+  <nav class="article-footer" aria-label="Article footer">
+    <a href="{{ verify_url }}" rel="noopener noreferrer">Verify content hash →</a>
+    <a href="{{ catalog_url }}" rel="noopener noreferrer">Browse the catalog →</a>
+    <a href="{{ feed_url }}" rel="noopener noreferrer">Subscribe to the feed →</a>
+    <a href="{{ access_url }}">Get API access →</a>
+  </nav>
+</article>
+{% endblock %}

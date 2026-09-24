@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentnews"
+version = "0.1.0"
+description = "Paid machine-readable feed of Sneferu-produced research bundles"
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi>=0.100",
+    "uvicorn[standard]>=0.20",
+    "httpx>=0.24",
+    "jinja2>=3.0",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "build", "wheel"]
+
+[project.scripts]
+agentnews = "agentnews.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+agentnews = ["templates/*.html", "templates/*.xml", "static/*", "migrations/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

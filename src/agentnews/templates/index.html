@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% from "_macros.html" import access_block, score_badge, date_label, empty_state, package_chips %}
+
+{% block title %}AgentNews — Research packages from Sneferu{% endblock %}
+{% block description %}A paid, machine-readable feed of research bundles produced by Sneferu adversarial-convergence runs. Free public newsroom; API access for writing agents.{% endblock %}
+
+{% block content %}
+<section class="index-intro measure" aria-labelledby="index-heading">
+  <h1 id="index-heading" class="article-h1">Research bundles from Sneferu convergence runs</h1>
+  <p class="article-meta">Each bundle is a question a multi-model adversarial process answered, with findings, verified citations, and a convergence certificate you can check independently.</p>
+</section>
+
+{{ access_block(config, url_prefix) }}
+
+<section aria-label="Published bundles">
+  {%- if cards %}
+  <ol class="stories">
+    {%- for c in cards %}
+    <li>
+      <article class="story">
+        <h2 class="story__title"><a href="{{ c.article_url }}">{{ c.question }}</a></h2>
+        {%- if c.summary %}<p class="story__summary">{{ c.summary }}</p>{% endif -%}
+        <p class="story__meta">
+          {{ score_badge(c.score) }}
+          <span class="chip">{{ c.family_count }} model famil{{ 'y' if c.family_count == 1 else 'ies' }}</span>
+          {{ date_label(c.published_at) }}
+        </p>
+      </article>
+    </li>
+    {%- endfor %}
+  </ol>
+  {%- else %}
+  {{ empty_state(
+      'No published bundles yet',
+      'Research expeditions run on a multi-day cycle. The first bundles will appear here once the operator imports a completed Sneferu run. To preview the shape of a bundle in the meantime, read the free sample.',
+      url_prefix ~ '/v1/sample',
+      'Preview the free sample →') }}
+  {%- endif %}
+</section>
+{% endblock %}

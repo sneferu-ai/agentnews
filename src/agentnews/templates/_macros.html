@@ -1,0 +1,162 @@
+{# AgentNews — shared UI component macros (spec §6.3).
+   No JavaScript. Every value is server-rendered from real data/config. #}
+
+{# date_label(iso) — render an ISO 8601 timestamp as a human date.
+   Returns '' for empty input so templates can pipe without guards. #}
+{% macro date_label(iso) -%}
+{%- if iso -%}
+{%- set parts = iso.split('T') -%}
+{%- set d = parts[0] -%}
+{%- if parts|length > 1 -%}
+{%- set t = parts[1].rstrip('Z')[:5] -%}
+<time datetime="{{ iso }}">{{ d }}{% if t %} · {{ t }} UTC{% endif %}</time>
+{%- else -%}
+<time datetime="{{ iso }}">{{ d }}</time>
+{%- endif -%}
+{%- else -%}
+<span class="date-unknown">Date unavailable</span>
+{%- endif -%}
+{%- endmacro %}
+
+{# score_badge(score) — tiered score pill. Tier thresholds: >=80 high, 60-79 neutral, <60 low. #}
+{% macro score_badge(score) -%}
+{%- if score is none -%}
+<span class="score score--neutral" title="Quality score unavailable">score n/a</span>
+{%- elif score >= 80 -%}
+<span class="score score--hi" title="Convergence quality score: {{ '%.1f'|format(score|float) }}/100">score {{ '%.0f'|format(score|float) }}</span>
+{%- elif score >= 60 -%}
+<span class="score score--neutral" title="Convergence quality score: {{ '%.1f'|format(score|float) }}/100">score {{ '%.0f'|format(score|float) }}</span>
+{%- else -%}
+<span class="score score--lo" title="Convergence quality score: {{ '%.1f'|format(score|float) }}/100">score {{ '%.0f'|format(score|float) }}</span>
+{%- endif -%}
+{%- endmacro %}
+
+{# verification_badge(citation) — icon + label, never hue alone.
+   verified: 1=resolved, -1=restricted, -2=failed, -3=resolves to a different work,
+   0/other=not checked. #}
+{% macro verification_badge(c) -%}
+{%- if c.verified == 1 -%}
+<span class="vbadge v-ok"><span class="vbadge__icon" aria-hidden="true">✓</span> Link resolved</span>
+{%- elif c.verified == -1 -%}
+<span class="vbadge v-restrict"><span class="vbadge__icon" aria-hidden="true">⊘</span> Access restricted</span>
+{%- elif c.verified == -2 -%}
+<span class="vbadge v-fail"><span class="vbadge__icon" aria-hidden="true">✗</span> Link failed</span>
+{%- elif c.verified == -3 -%}
+<span class="vbadge v-fail" title="The link resolves, but to a different paper than the one cited"><span class="vbadge__icon" aria-hidden="true">≠</span> Wrong paper</span>
+{%- else -%}
+<span class="vbadge v-none"><span class="vbadge__icon" aria-hidden="true">—</span> Not checked</span>
+{%- endif -%}
+{%- endmacro %}
+
+{# package_chips(pkg) — model-family count + latency chips. #}
+{% macro package_chips(pkg) -%}
+{%- set fams = (pkg.signature or {}).get('model_families') or [] -%}
+{%- set fc = fams|length -%}
+<span class="chip">{{ fc }} model famil{{ 'y' if fc == 1 else 'ies' }}</span>
+{%- if pkg.get('is_sample') %}<span class="chip">free sample</span>{% endif -%}
+{%- if (pkg.signature or {}).get('degraded') %}<span class="chip">degraded convergence</span>{% endif -%}
+{%- endmacro %}
+
+{# prose(text) — sanitized markdown body. Caller passes a markupsafe.Markup object. #}
+{% macro prose(html) -%}
+<div class="prose">{{ html }}</div>
+{%- endmacro %}
+
+{# citation_list(citations) — numbered reference list with verification state + collapsible excerpt. #}
+{% macro citation_list(citations) -%}
+{%- if not citations -%}
+<p class="refs-empty">No citations recorded for this bundle.</p>
+{%- else -%}
+<ol class="refs">
+{%- for c in citations %}
+  <li class="refs__item">
+    <span class="refs__num" aria-hidden="true">{{ '%02d'|format(c.ordinal) }}</span>
+    <div class="refs__body">
+      {%- if c.url %}<a class="refs__title" href="{{ c.url }}" rel="noopener noreferrer">{{ c.title or c.url }}</a>{%- else %}<span class="refs__title">{{ c.title or 'Untitled source' }}</span>{%- endif %}
+      <p class="refs__meta">
+        {%- if c.source_type %}<span class="chip chip--type">{{ c.source_type }}</span>{% endif -%}
+        {%- if c.authors %}<span class="refs__authors">{{ c.authors }}</span>{% endif -%}
+        {%- if c.year %}<span class="refs__year">{{ c.year }}</span>{% endif -%}
+        {{ verification_badge(c) }}
+      </p>
+      {%- if c.excerpt %}
+      <details class="refs__excerpt">
+        <summary>Show excerpt</summary>
+        <blockquote>{{ c.excerpt }}</blockquote>
+      </details>
+      {%- endif %}
+    </div>
+  </li>
+{%- endfor %}
+</ol>
+{%- endif -%}
+{%- endmacro %}
+
+{# certificate(pkg, config) — convergence metadata panel. Every field from real data. #}
+{% macro certificate(pkg, config) -%}
+{%- set sig = pkg.signature or {} -%}
+{%- set fams = sig.get('model_families') or [] -%}
+<aside class="certificate" aria-label="Convergence certificate">
+  <h2 class="certificate__title">Convergence certificate</h2>
+  <dl class="certificate__fields">
+    <dt>Run ID</dt>
+    <dd class="mono">{{ pkg.run_id }}</dd>
+    <dt>Run type</dt>
+    <dd>{{ pkg.run_type or 'unspecified' }}</dd>
+    <dt>Converged at</dt>
+    <dd>{{ date_label(pkg.get('run_completed_at')) }}</dd>
+    <dt>Model families</dt>
+    <dd>{{ fams|length }} independent trainer{{ 's' if fams|length != 1 else '' }}{% if fams %} — {{ fams|join(', ') }}{% endif %}</dd>
+    <dt>Degraded</dt>
+    <dd>{{ 'yes' if sig.get('degraded') else 'no' }}</dd>
+    <dt>Signature hash</dt>
+    <dd class="mono">{{ sig.get('signature_hash') or pkg.get('content_hash') or 'unavailable' }}</dd>
+    <dt>Independent verification</dt>
+    <dd><a href="{{ config.public_url }}/v1/packages/{{ pkg.id }}/verify" rel="noopener noreferrer">Verify content hash →</a></dd>
+  </dl>
+</aside>
+{%- endmacro %}
+
+{# reuse_summary(pkg, config) — reuse terms summary panel. #}
+{% macro reuse_summary(pkg, config) -%}
+{%- set terms = pkg.get('reuse_terms') or {} -%}
+<section class="reuse" aria-label="Reuse terms">
+  <h2 class="certificate__title">Reuse &amp; license</h2>
+  <p class="reuse__summary">License: <strong>{{ terms.get('license', 'agentnews-research-v1') }}</strong> (v{{ terms.get('terms_version', '1.0') }}). Buyers may republish excerpts up to {{ terms.get('max_excerpt_words', 300) }} words with attribution; derivatives and commercial use permitted. Third-party source rights are not overridden.</p>
+  <p class="reuse__link"><a href="{{ config.public_url }}/static/reuse-license-v1.md">Read the full reuse license →</a></p>
+</section>
+{%- endmacro %}
+
+{# code_block(code, caption) — copyable code figure. No JS copy button (FR-035). #}
+{% macro code_block(code, caption) -%}
+<figure class="code-block">
+  {%- if caption %}<figcaption>{{ caption }}</figcaption>{% endif -%}
+  <pre><code>{{ code }}</code></pre>
+</figure>
+{%- endmacro %}
+
+{# access_block(config, url_prefix) — persistent founding-offer band on the index. #}
+{% macro access_block(config, url_prefix='') -%}
+<aside class="offer-band" aria-label="API access offer">
+  <p class="offer-band__text">Machine-readable research bundles for writing agents. Founding access: <strong>${{ config.founding_price_usd }}</strong> USD for 90 days.</p>
+  <p class="offer-band__links">
+    {%- if config.payment_link_url %}
+    <a href="{{ config.payment_link_url }}" rel="noopener noreferrer">Get API access →</a>
+    {%- else %}
+    <a href="{{ url_prefix }}/access" aria-disabled="true">Get API access (link not configured)</a>
+    {%- endif %}
+    <a href="{{ url_prefix }}/v1/sample">Preview the free sample →</a>
+  </p>
+</aside>
+{%- endmacro %}
+
+{# empty_state(title, message, cta_url, cta_label) — visible empty state. #}
+{% macro empty_state(title, message, cta_url, cta_label) -%}
+<div class="empty-state">
+  <h2 class="empty-state__title">{{ title }}</h2>
+  <p class="empty-state__message">{{ message }}</p>
+  {%- if cta_url and cta_label %}
+  <p class="empty-state__cta"><a href="{{ cta_url }}">{{ cta_label }}</a></p>
+  {%- endif %}
+</div>
+{%- endmacro %}

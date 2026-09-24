@@ -1,0 +1,1 @@
+"""AgentNews SQL migrations package."""

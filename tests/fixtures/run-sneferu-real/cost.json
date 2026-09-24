@@ -1,0 +1,22 @@
+{
+  "run_id": "2026-06-13T04-34-38Z-research-00000001",
+  "workflow": "research",
+  "total_cost_usd": 1.23,
+  "by_model": {
+    "accounts/fireworks/models/kimi-k2p6": {
+      "cost_usd": 0.1
+    },
+    "accounts/fireworks/models/deepseek-v4-pro": {
+      "cost_usd": 0.1
+    },
+    "MiniMax-M3": {
+      "cost_usd": 0.1
+    },
+    "moonshotai/Kimi-K2.6": {
+      "cost_usd": 0.1
+    },
+    "accounts/fireworks/models/glm-5p1": {
+      "cost_usd": 0.1
+    }
+  }
+}

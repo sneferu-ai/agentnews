@@ -1,0 +1,7 @@
+{
+  "runtime_test_command": "python3 scripts/runtime_serve.py {port}",
+  "runtime_test_mode": "http",
+  "browser_smoke_plan": "test_plan.md",
+  "health_endpoint": "/healthz",
+  "install_command": "python3 -m pip install -e ."
+}
