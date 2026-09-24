@@ -1,10 +1,13 @@
 <div align="center">
 
-# AgentNews
 
-**A newsroom for writing agents. Research bundles you can check before you cite.**
+<img width="156" height="50" alt="image" src="https://github.com/user-attachments/assets/603dd7ec-8380-496d-b36e-214426fac8e2" />
 
-AgentNews turns converged Sneferu research runs into a paid, machine-readable feed. It also runs a free public newsroom where people can judge each bundle before paying. Every bundle carries its findings, a reference list with a verification state on every entry, a convergence certificate and a content hash.
+**A newsroom for writing agents. Research bundles you use for your stories**
+
+AgentNews turns converged Sneferu Research Expeditions into a paid, machine-readable feed. It also runs a free public newsroom where people can judge each bundle before paying. Every bundle carries its findings, a reference list with a verification state on every entry, a convergence certificate and a content hash.
+
+A single research expedition can produce hundreds of experiments, model disagreements, discoveries, refutations, look elsewhere checks, follow-up leads, findings reports, and even purpose built software used to test a hypothesis. Sneferu may not surface every valuable thread, so AgentNews makes the complete evidence bundle available for other agents, such as MUSE to inspect, reinterpret, and turn into new content.
 
 ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-REST%20%2B%20Atom-009688?logo=fastapi&logoColor=white)
@@ -92,15 +95,6 @@ python3 -m pytest tests/ -q        # 197 passed
 
 The suite covers the ingest parser, the admission filter, storage and the status machine, HTML/Atom rendering and the sanitizer, every API route, the CLI, auth, rate limiting, security headers and static-site output. It also has two suites added while preparing this repository, described below.
 
-## Fixed while preparing this repository
-
-The first attempt to import a **real** Sneferu run failed, and so did every attempt after it. Three defects were behind that, and all three are fixed here:
-
-1. **The signature shape matched no real run.** AgentNews expected a flat `signature.json` (`degraded`, `model_families`, … at the top level). Real Sneferu signatures don't have those keys: degradation sits under `degradation` and `signature_class`, and the models are under `cast`. The test fixtures had been written in that flat shape, so every test passed while every real run failed with `SCHEMA_VALIDATION`. `ingest.normalize_signature` now projects the real shape onto the flat keys the product reads. Model families come from the models that actually ran (`cost.json`), not every configured seat. Only the projection is stored, so a run's internal configuration and model parameters never reach subscribers.
-2. **Real reference lists were invisible.** Sneferu writes references as unnumbered bullets (`` - `arXiv:2305.04388` – Turpin et al. (2023). Title. ``), and the parser only accepted `[1]`-style ordinals. That produced `INSUFFICIENT_CITATIONS:0` on runs with fifteen references. Bullets are now parsed, and bare arXiv/DOI identifiers become resolvable URLs.
-3. **"Verified" only meant "the link loads".** Once real runs imported, live verification marked all fifteen references *resolved*, but four of them were the wrong paper. The new **≠ Wrong paper** state compares the cited title with the arXiv page's own title. The four real mismatches are pinned in `tests/test_citation_identity.py`.
-
-`tests/test_sneferu_real_layout.py` runs against a trimmed copy of a real run's signature, with a planted private path that must never leak.
 
 ## Built on Sneferu
 
@@ -131,10 +125,7 @@ The schema miss above is the honest counterpoint. The seed pointed at a real run
 
 <div align="center">
 
----
 
-**Built by [Sneferu](https://sneferu.ai)**
-
-<sub>README by Claude (Anthropic). The screenshots show a real Sneferu research run imported on a local instance. Pricing and payment links are placeholders.</sub>
+<img width="207" alt="image" src="https://github.com/user-attachments/assets/a9423b33-b38b-4798-82c2-93c7b36395f6" />
 
 </div>
